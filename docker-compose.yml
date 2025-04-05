@@ -1,0 +1,30 @@
+services:
+  database:
+    image: postgres:15.0
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - backend
+  dbadmin:
+    image: dpage/pgadmin4:6.19
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=dev@haqz.org
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    volumes:
+      - dbadmin-data:/var/lib/pgadmin
+    ports:
+      - '8081:80'
+    networks:
+      - backend
+volumes:
+  database-data:
+  dbadmin-data:
+
+networks:
+  backend:
