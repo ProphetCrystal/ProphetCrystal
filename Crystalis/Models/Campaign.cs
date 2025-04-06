@@ -11,8 +11,10 @@ public class Campaign
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+    public string AuthorId { get; set; }
     
     public ICollection<Location> Locations { get; set; } = new List<Location>();
     public ICollection<CampaignUser> CampaignUsers { get; set; } = new List<CampaignUser>();
+    public ApplicationUser Author { get; set; }
     
 }

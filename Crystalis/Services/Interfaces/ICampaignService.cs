@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Crystalis.DTO.Campaign;
 using Crystalis.Enums;
 using Crystalis.Models;
@@ -9,7 +10,7 @@ public interface ICampaignService
     public List<GetCampaignDto> Get();
     public GetCampaignDto Get(int id);
     public GetCampaignDto Get(string id);
-    public GetCampaignDto Add(CreateCampaignDto campaign);
+    public Task<GetCampaignDto> Add(CreateCampaignDto campaign, ClaimsPrincipal user);
     public GetCampaignDto Update(Campaign campaign);
     public void Delete(int id);
     public void Delete(string id);

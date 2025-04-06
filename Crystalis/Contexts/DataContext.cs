@@ -24,6 +24,10 @@ public class DataContext : IdentityDbContext<ApplicationUser>
             .HasMany(c => c.Locations)
             .WithOne(l => l.Campaign)
             .HasForeignKey(l => l.CampaignID);
+        modelBuilder.Entity<Campaign>()
+            .HasOne(c => c.Author)
+            .WithMany(l => l.Campaigns)
+            .HasForeignKey(l => l.AuthorId);
             
         modelBuilder.Entity<ApplicationUser>()
             .HasMany(u => u.Characters)

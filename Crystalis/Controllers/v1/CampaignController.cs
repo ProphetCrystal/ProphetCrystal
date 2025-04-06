@@ -18,11 +18,11 @@ public class CampaignController : ControllerBase
         _logger = logger;
         _campaignService = campaignService;
     }
-    [Authorize(Roles = "GameMaster")]
+    [Authorize(Policy = "PlayerAccess")]
     [HttpPost(Name = "create")]
-    public IActionResult Create([FromBody] CreateCampaignDto campaignDto)
+    public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
     {
-        var campaign = _campaignService.Add(campaignDto);
+        var campaign = await _campaignService.Add(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 }

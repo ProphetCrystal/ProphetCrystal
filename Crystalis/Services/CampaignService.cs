@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using AutoMapper;
 using Crystalis.DTO.Campaign;
+using Crystalis.Enums;
 using Crystalis.Models;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Crystalis.Services;
 
@@ -10,10 +13,12 @@ public class CampaignService : ICampaignService
 {
     private readonly ICampaignRepository _campaignService;
     private readonly IMapper _mapper;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper)
+    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _mapper = mapper;
+        _userManager = userManager;
         _campaignService = campaignRepository;
     }
 
@@ -32,9 +37,18 @@ public class CampaignService : ICampaignService
         throw new NotImplementedException();
     }
 
-    public GetCampaignDto Add(CreateCampaignDto campaign)
+    public async Task<GetCampaignDto> Add(CreateCampaignDto campaign, ClaimsPrincipal user)
     {
-        var createdCampaign = _campaignService.Add(_mapper.Map<Campaign>(campaign));
+        var currentUser = await _userManager.GetUserAsync(user);
+        var mappedCampaign = _mapper.Map<Campaign>(campaign);
+        mappedCampaign.Author = currentUser;
+        mappedCampaign.CampaignUsers.Add( new()
+        {
+            UserId = currentUser.Id,
+            Role = CampaignUserRole.GameMaster
+        });
+        var createdCampaign = _campaignService.Add(mappedCampaign);
+        
         return _mapper.Map<GetCampaignDto>(createdCampaign);
     }
 

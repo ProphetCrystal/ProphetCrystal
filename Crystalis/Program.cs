@@ -1,4 +1,5 @@
 using System.Text;
+using Crystalis.Authorization;
 using Crystalis.Configuration;
 using Crystalis.Contexts;
 using Crystalis.Models;
@@ -7,6 +8,7 @@ using Crystalis.Repositories.Interfaces;
 using Crystalis.Services;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,7 +32,8 @@ builder.Services.AddScoped<ICampaignService, CampaignService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 //Repositories
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
-
+//Misc
+builder.Services.AddHttpContextAccessor();
 //Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -61,6 +64,18 @@ builder.Services.AddAuthentication(options =>
                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
         };
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminAccess", policy => 
+        policy.Requirements.Add(new RoleHierarchyRequirement("Admin")));
+    
+    options.AddPolicy("GameMasterAccess", policy => 
+        policy.Requirements.Add(new RoleHierarchyRequirement("GameMaster")));
+    
+    options.AddPolicy("PlayerAccess", policy => 
+        policy.Requirements.Add(new RoleHierarchyRequirement("Player")));
+});
+builder.Services.AddSingleton<IAuthorizationHandler, RoleHierarchyHandler>();
 
 var app = builder.Build();
 
@@ -69,12 +84,12 @@ if (app.Environment.IsDevelopment())
 {
     using (IServiceScope scope = app.Services.CreateScope())
     using (DataContext? context = scope.ServiceProvider.GetService<DataContext>()) {
-        // context?.Database.EnsureDeleted();
+        context?.Database.EnsureDeleted();
         context?.Database.EnsureCreated();
         
-        context.Roles.Add(new IdentityRole("Admin"));
-        context.Roles.Add(new IdentityRole("GameMaster"));
-        context.Roles.Add(new IdentityRole("Player"));
+        context.Roles.Add(new (){ Name = "Admin", NormalizedName = "ADMIN" });
+        context.Roles.Add(new (){ Name = "GameMaster", NormalizedName = "GAMEMASTER" });
+        context.Roles.Add(new (){ Name = "Player", NormalizedName = "PLAYER" });
         context.SaveChanges();
     }
     
