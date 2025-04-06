@@ -1,10 +1,17 @@
+using Crystalis.Contexts;
 using Crystalis.Models;
 using Crystalis.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Crystalis.Repositories;
 
 public class CampaignRepository : ICampaignRepository
 {
+    private readonly DataContext _dataContext;
+    public CampaignRepository (DataContext dataContext)
+    {
+        _dataContext = dataContext;
+    }
     public List<Campaign> Get()
     {
         throw new NotImplementedException();
@@ -22,7 +29,11 @@ public class CampaignRepository : ICampaignRepository
 
     public Campaign Add(Campaign campaign)
     {
-        throw new NotImplementedException();
+        campaign.UpdatedAt = DateTime.UtcNow;
+        campaign.Uuid = Guid.NewGuid();
+        EntityEntry<Campaign> entry = _dataContext.Add(campaign);
+        _dataContext.SaveChanges();
+        return entry.Entity;
     }
 
     public Campaign Update(Campaign campaign)

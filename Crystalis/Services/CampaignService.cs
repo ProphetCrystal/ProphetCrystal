@@ -1,31 +1,44 @@
+using AutoMapper;
+using Crystalis.DTO.Campaign;
 using Crystalis.Models;
+using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
 
 namespace Crystalis.Services;
 
 public class CampaignService : ICampaignService
 {
-    public List<Campaign> Get()
+    private readonly ICampaignRepository _campaignService;
+    private readonly IMapper _mapper;
+
+    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper)
+    {
+        _mapper = mapper;
+        _campaignService = campaignRepository;
+    }
+
+    public List<GetCampaignDto> Get()
     {
         throw new NotImplementedException();
     }
 
-    public Campaign Get(int id)
+    public GetCampaignDto Get(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Campaign Get(string id)
+    public GetCampaignDto Get(string id)
     {
         throw new NotImplementedException();
     }
 
-    public Campaign Add(Campaign campaign)
+    public GetCampaignDto Add(CreateCampaignDto campaign)
     {
-        throw new NotImplementedException();
+        var createdCampaign = _campaignService.Add(_mapper.Map<Campaign>(campaign));
+        return _mapper.Map<GetCampaignDto>(createdCampaign);
     }
 
-    public Campaign Update(Campaign campaign)
+    public GetCampaignDto Update(Campaign campaign)
     {
         throw new NotImplementedException();
     }
