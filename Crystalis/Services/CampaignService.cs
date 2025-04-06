@@ -66,4 +66,10 @@ public class CampaignService : ICampaignService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<GetCampaignDto> Join(JoinCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    {
+        var currentUser = await _userManager.GetUserAsync(user);
+        return _mapper.Map<GetCampaignDto>(_campaignService.Join(joinCampaignDto.CampaignUuid, currentUser.Id));
+    }
 }

@@ -18,11 +18,19 @@ public class CampaignController : ControllerBase
         _logger = logger;
         _campaignService = campaignService;
     }
-    [Authorize(Policy = "PlayerAccess")]
-    [HttpPost(Name = "create")]
+    // [Authorize(Policy = "PlayerAccess")]
+    [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
     {
         var campaign = await _campaignService.Add(campaignDto, HttpContext.User);
+        return Ok(campaign);
+    }
+    
+    // [Authorize(Policy = "PlayerAccess")]
+    [HttpPost("join")]
+    public async Task<IActionResult> Join([FromBody] JoinCampaignDto campaignDto)
+    {
+        var campaign = await _campaignService.Join(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 }

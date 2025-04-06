@@ -15,6 +15,7 @@ public class Campaign
     
     public ICollection<Location> Locations { get; set; } = new List<Location>();
     public ICollection<CampaignUser> CampaignUsers { get; set; } = new List<CampaignUser>();
+    public ICollection<CampaignQueue> CampaignQueues { get; set; } = new List<CampaignQueue>();
     public ApplicationUser Author { get; set; }
     
 }

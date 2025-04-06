@@ -12,4 +12,5 @@ public interface ICampaignRepository
     public Campaign Update(Campaign campaign);
     public void Delete(int id);
     public void Delete(string id);
+    public Campaign Join(string campaignId, string userId);
 }
