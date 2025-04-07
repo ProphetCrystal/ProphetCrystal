@@ -2,12 +2,13 @@ using System.Security.Claims;
 using Crystalis.DTO.Campaign;
 using Crystalis.Enums;
 using Crystalis.Models;
+using Sieve.Models;
 
 namespace Crystalis.Services.Interfaces;
 
 public interface ICampaignService
 {
-    public List<GetCampaignDto> Get();
+    public Task<List<GetCampaignDto>> Get(SieveModel sieveModel, ClaimsPrincipal user);
     public GetCampaignDto Get(int id);
     public GetCampaignDto Get(string id);
     public Task<GetCampaignDto> Add(CreateCampaignDto campaign, ClaimsPrincipal user);

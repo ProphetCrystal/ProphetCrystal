@@ -6,12 +6,13 @@ using Crystalis.Models;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Sieve.Models;
 
 namespace Crystalis.Services;
 
 public class CampaignService : ICampaignService
 {
-    private readonly ICampaignRepository _campaignService;
+    private readonly ICampaignRepository _campaignRepository;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
 
@@ -19,12 +20,13 @@ public class CampaignService : ICampaignService
     {
         _mapper = mapper;
         _userManager = userManager;
-        _campaignService = campaignRepository;
+        _campaignRepository = campaignRepository;
     }
 
-    public List<GetCampaignDto> Get()
+    public async Task<List<GetCampaignDto>> Get(SieveModel sieveModel, ClaimsPrincipal user)
     {
-        throw new NotImplementedException();
+        var currentUser = await _userManager.GetUserAsync(user);
+        return _mapper.Map<List<GetCampaignDto>>(_campaignRepository.Get(sieveModel, user.IsInRole("Admin"), currentUser.Id));
     }
 
     public GetCampaignDto Get(int id)
@@ -47,7 +49,7 @@ public class CampaignService : ICampaignService
             UserId = currentUser.Id,
             Role = CampaignUserRole.GameMaster
         });
-        var createdCampaign = _campaignService.Add(mappedCampaign);
+        var createdCampaign = _campaignRepository.Add(mappedCampaign);
         
         return _mapper.Map<GetCampaignDto>(createdCampaign);
     }
@@ -70,12 +72,12 @@ public class CampaignService : ICampaignService
     public async Task<GetCampaignDto> Join(JoinCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
-        return _mapper.Map<GetCampaignDto>(_campaignService.Join(joinCampaignDto.CampaignUuid, currentUser.Id));
+        return _mapper.Map<GetCampaignDto>(_campaignRepository.Join(joinCampaignDto.CampaignUuid, currentUser.Id));
     }
 
     public async Task<bool> Leave(LeaveCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
-        return _campaignService.Leave(joinCampaignDto.CampaignUuid, currentUser.Id);
+        return _campaignRepository.Leave(joinCampaignDto.CampaignUuid, currentUser.Id);
     }
 }

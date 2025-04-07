@@ -7,11 +7,13 @@ using Crystalis.Repositories;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services;
 using Crystalis.Services.Interfaces;
+using Crystalis.Sieves;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Sieve.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 //Misc
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 //Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {

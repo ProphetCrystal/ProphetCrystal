@@ -3,6 +3,7 @@ using Crystalis.Models;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
 
 namespace Crystalis.Controllers.v1;
 
@@ -39,5 +40,12 @@ public class CampaignController : ControllerBase
     {
         var campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
         return Ok(campaign);
+    }
+
+    [HttpGet("index")]
+    public async Task<IActionResult> Index([FromQuery] SieveModel sieveModel)
+    {
+        var campaigns = await _campaignService.Get(sieveModel, HttpContext.User);
+        return Ok(campaigns);
     }
 }

@@ -1,20 +1,31 @@
 using Crystalis.Contexts;
 using Crystalis.Models;
 using Crystalis.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Crystalis.Repositories;
 
 public class CampaignRepository : ICampaignRepository
 {
     private readonly DataContext _dataContext;
-    public CampaignRepository (DataContext dataContext)
+    private readonly ISieveProcessor _sieveProcessor;
+    public CampaignRepository (DataContext dataContext, ISieveProcessor sieveProcessor)
     {
         _dataContext = dataContext;
+        _sieveProcessor = sieveProcessor;
     }
-    public List<Campaign> Get()
+    public List<Campaign> Get(SieveModel sieveModel, bool isAdmin, string userId)
     {
-        throw new NotImplementedException();
+        var result = _dataContext.Campaigns.AsNoTracking();
+        if (!isAdmin)
+        {
+            result = result.Where(x => x.AuthorId == userId);
+        }
+        result = _sieveProcessor.Apply(sieveModel, result);
+        return result.ToList();
     }
 
     public Campaign Get(int id)
