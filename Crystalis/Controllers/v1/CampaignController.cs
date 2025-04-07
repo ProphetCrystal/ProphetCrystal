@@ -33,4 +33,11 @@ public class CampaignController : ControllerBase
         var campaign = await _campaignService.Join(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
+    
+    [HttpPost("leave")]
+    public async Task<IActionResult> Join([FromBody] LeaveCampaignDto campaignDto)
+    {
+        var campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
+        return Ok(campaign);
+    }
 }

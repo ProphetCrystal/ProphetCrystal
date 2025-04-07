@@ -72,4 +72,10 @@ public class CampaignService : ICampaignService
         var currentUser = await _userManager.GetUserAsync(user);
         return _mapper.Map<GetCampaignDto>(_campaignService.Join(joinCampaignDto.CampaignUuid, currentUser.Id));
     }
+
+    public async Task<bool> Leave(LeaveCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    {
+        var currentUser = await _userManager.GetUserAsync(user);
+        return _campaignService.Leave(joinCampaignDto.CampaignUuid, currentUser.Id);
+    }
 }

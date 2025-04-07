@@ -13,4 +13,5 @@ public interface ICampaignRepository
     public void Delete(int id);
     public void Delete(string id);
     public Campaign Join(string campaignId, string userId);
+    public bool Leave(string campaignId, string userId);
 }

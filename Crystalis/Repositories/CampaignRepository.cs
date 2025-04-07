@@ -50,7 +50,26 @@ public class CampaignRepository : ICampaignRepository
     {
         throw new NotImplementedException();
     }
+    public bool Leave(string campaignId, string userId)
+    {
+        var campaign = this.Get(campaignId);
+        CampaignQueue? campaignQueue = _dataContext.CampaignQueues.FirstOrDefault((x) => x.CampaignId == campaign.Id && x.UserId == userId);
+        if (campaignQueue != null)
+        {
+            _dataContext.CampaignQueues.Remove(campaignQueue);
+            _dataContext.SaveChanges();
+            return true;
+        }
 
+        CampaignUser? campaignUser = _dataContext.CampaignUsers.FirstOrDefault((x) => x.CampaignId == campaign.Id && x.UserId == userId);
+        if (campaignUser != null)
+        {
+            _dataContext.CampaignUsers.Remove(campaignUser);
+            _dataContext.SaveChanges();
+            return true;
+        }
+        return false;
+    }
     public Campaign Join(string campaignId, string userId)
     {
         var campaign = this.Get(campaignId);

@@ -15,4 +15,5 @@ public interface ICampaignService
     public void Delete(int id);
     public void Delete(string id);
     public Task<GetCampaignDto> Join(JoinCampaignDto joinCampaignDto, ClaimsPrincipal user);
+    public Task<bool> Leave(LeaveCampaignDto joinCampaignDto, ClaimsPrincipal user);
 }
