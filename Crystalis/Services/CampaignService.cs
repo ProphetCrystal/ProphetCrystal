@@ -23,23 +23,23 @@ public class CampaignService : ICampaignService
         _campaignRepository = campaignRepository;
     }
 
-    public async Task<List<GetCampaignDto>> Get(SieveModel sieveModel, ClaimsPrincipal user)
+    public async Task<List<CampaignDto>> Get(SieveModel sieveModel, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
-        return _mapper.Map<List<GetCampaignDto>>(_campaignRepository.Get(sieveModel, user.IsInRole("Admin"), currentUser.Id));
+        return _mapper.Map<List<CampaignDto>>(_campaignRepository.Get(sieveModel, user.IsInRole("Admin"), currentUser.Id));
     }
 
-    public GetCampaignDto Get(int id)
+    public CampaignDto Get(int id)
     {
-        throw new NotImplementedException();
+        return _mapper.Map<CampaignDto>(_campaignRepository.Get(id));
     }
 
-    public GetCampaignDto Get(string id)
+    public CampaignDto Get(string id)
     {
-        throw new NotImplementedException();
+        return _mapper.Map<CampaignDto>(_campaignRepository.Get(id));
     }
 
-    public async Task<GetCampaignDto> Add(CreateCampaignDto campaign, ClaimsPrincipal user)
+    public async Task<CampaignDto> Create(CreateCampaignDto campaign, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
         var mappedCampaign = _mapper.Map<Campaign>(campaign);
@@ -49,35 +49,37 @@ public class CampaignService : ICampaignService
             UserId = currentUser.Id,
             Role = CampaignUserRole.GameMaster
         });
-        var createdCampaign = _campaignRepository.Add(mappedCampaign);
+        var createdCampaign = _campaignRepository.Create(mappedCampaign);
         
-        return _mapper.Map<GetCampaignDto>(createdCampaign);
+        return _mapper.Map<CampaignDto>(createdCampaign);
     }
 
-    public GetCampaignDto Update(Campaign campaign)
+    public CampaignDto Update(UpdateCampaignDto campaign)
     {
-        throw new NotImplementedException();
+        var mappedCampaign = _mapper.Map<Campaign>(campaign);
+        mappedCampaign.UpdatedAt = DateTime.Now;
+        return _mapper.Map<CampaignDto>(_campaignRepository.Update(mappedCampaign));
     }
 
     public void Delete(int id)
     {
-        throw new NotImplementedException();
+        _campaignRepository.Delete(id);
     }
 
     public void Delete(string id)
     {
-        throw new NotImplementedException();
+        _campaignRepository.Delete(id);
     }
 
-    public async Task<GetCampaignDto> Join(JoinCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    public async Task<CampaignDto> Join(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
-        return _mapper.Map<GetCampaignDto>(_campaignRepository.Join(joinCampaignDto.CampaignUuid, currentUser.Id));
+        return _mapper.Map<CampaignDto>(_campaignRepository.Join(joinCampaignDto.Uuid, currentUser.Id));
     }
 
-    public async Task<bool> Leave(LeaveCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    public async Task<bool> Leave(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
         var currentUser = await _userManager.GetUserAsync(user);
-        return _campaignRepository.Leave(joinCampaignDto.CampaignUuid, currentUser.Id);
+        return _campaignRepository.Leave(joinCampaignDto.Uuid, currentUser.Id);
     }
 }

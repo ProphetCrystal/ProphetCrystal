@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Crystalis.Authorization;
 using Crystalis.Configuration;
@@ -8,11 +9,15 @@ using Crystalis.Repositories.Interfaces;
 using Crystalis.Services;
 using Crystalis.Services.Interfaces;
 using Crystalis.Sieves;
+using FluentValidation;
+using FluentValidation.Internal;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Sieve.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +39,19 @@ builder.Services.AddScoped<ICampaignService, CampaignService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 //Repositories
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+//Autovalidation
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddFluentValidationAutoValidation(configuration =>
+{
+    // Disable the built-in .NET model (data annotations) validation.
+    configuration.DisableBuiltInModelValidation = true;
+
+    // Enable validation for parameters bound from `BindingSource.Path` binding sources.
+    configuration.EnablePathBindingSourceAutomaticValidation = true;
+
+    // Only validate controllers decorated with the `FluentValidationAutoValidation` attribute.
+    configuration.ValidationStrategy = ValidationStrategy.All;
+});
 //Misc
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();

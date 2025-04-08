@@ -9,6 +9,6 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<CreateCampaignDto, Campaign>();
-        CreateMap<Campaign, GetCampaignDto>();
+        CreateMap<Campaign, CampaignDto>();
     }
 }

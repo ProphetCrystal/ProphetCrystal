@@ -30,15 +30,15 @@ public class CampaignRepository : ICampaignRepository
 
     public Campaign Get(int id)
     {
-        throw new NotImplementedException();
+        return _dataContext.Campaigns.AsNoTracking().First(x => x.Id == id);
     }
 
     public Campaign Get(string id)
     {
-        return _dataContext.Campaigns.First(x => x.Uuid == Guid.Parse(id));
+        return _dataContext.Campaigns.AsNoTracking().First(x => x.Uuid == Guid.Parse(id));
     }
 
-    public Campaign Add(Campaign campaign)
+    public Campaign Create(Campaign campaign)
     {
         campaign.UpdatedAt = DateTime.UtcNow;
         campaign.Uuid = Guid.NewGuid();
@@ -49,17 +49,22 @@ public class CampaignRepository : ICampaignRepository
 
     public Campaign Update(Campaign campaign)
     {
-        throw new NotImplementedException();
+        var campaignToUpdate = _dataContext.Campaigns.First(x => x.Uuid == campaign.Uuid);
+        _dataContext.Campaigns.Entry(campaignToUpdate).CurrentValues.SetValues(campaign);
+        _dataContext.SaveChanges();
+        return campaignToUpdate;
     }
 
     public void Delete(int id)
     {
-        throw new NotImplementedException();
+        _dataContext.Remove(_dataContext.Campaigns.First(x => x.Id == id));
+        _dataContext.SaveChanges();
     }
 
     public void Delete(string id)
     {
-        throw new NotImplementedException();
+        _dataContext.Remove(_dataContext.Campaigns.First(x => x.Uuid == Guid.Parse(id)));
+        _dataContext.SaveChanges();
     }
     public bool Leave(string campaignId, string userId)
     {

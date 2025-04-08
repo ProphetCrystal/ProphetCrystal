@@ -3,6 +3,7 @@ using Crystalis.Models;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 using Sieve.Models;
 
 namespace Crystalis.Controllers.v1;
@@ -19,33 +20,58 @@ public class CampaignController : ControllerBase
         _logger = logger;
         _campaignService = campaignService;
     }
-    // [Authorize(Policy = "PlayerAccess")]
-    [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
-    {
-        var campaign = await _campaignService.Add(campaignDto, HttpContext.User);
-        return Ok(campaign);
-    }
-    
-    // [Authorize(Policy = "PlayerAccess")]
-    [HttpPost("join")]
-    public async Task<IActionResult> Join([FromBody] JoinCampaignDto campaignDto)
-    {
-        var campaign = await _campaignService.Join(campaignDto, HttpContext.User);
-        return Ok(campaign);
-    }
-    
-    [HttpPost("leave")]
-    public async Task<IActionResult> Join([FromBody] LeaveCampaignDto campaignDto)
-    {
-        var campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
-        return Ok(campaign);
-    }
 
     [HttpGet("index")]
     public async Task<IActionResult> Index([FromQuery] SieveModel sieveModel)
     {
         var campaigns = await _campaignService.Get(sieveModel, HttpContext.User);
         return Ok(campaigns);
+    }
+    [AutoValidation]
+    [HttpGet]
+    public IActionResult Get([FromQuery] GetCampaignDto getCampaignDto)
+    {
+        var campaigns = _campaignService.Get(getCampaignDto.Uuid);
+        return Ok(campaigns);
+    }
+
+    // [Authorize(Policy = "PlayerAccess")]
+
+
+    [HttpPost("update")]
+    public  IActionResult Update([FromBody] UpdateCampaignDto campaignDto)
+    {
+        var campaign = _campaignService.Update(campaignDto);
+        return Ok(campaign);
+    }
+    [HttpPatch("create")]
+    public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
+    {
+        var campaign = await _campaignService.Create(campaignDto, HttpContext.User);
+        return Ok(campaign);
+    }
+
+    [HttpDelete]
+    public IActionResult Delete([FromQuery] GetCampaignDto getCampaignDto)
+    {
+        _campaignService.Delete(getCampaignDto.Uuid);
+        return Ok();
+    }
+
+    // [Authorize(Policy = "PlayerAccess")]
+
+
+    [HttpPost("join")]
+    public async Task<IActionResult> Join([FromBody] GetCampaignDto campaignDto)
+    {
+        var campaign = await _campaignService.Join(campaignDto, HttpContext.User);
+        return Ok(campaign);
+    }
+
+    [HttpPost("leave")]
+    public async Task<IActionResult> Leave([FromBody] GetCampaignDto campaignDto)
+    {
+        var campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
+        return Ok(campaign);
     }
 }
