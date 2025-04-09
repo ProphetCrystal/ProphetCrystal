@@ -13,6 +13,7 @@ public class World
     public string AuthorId { get; set; }
     
     public ICollection<Campaign.Campaign> Campaigns { get; set; }
+    public ICollection<Location> Locations { get; set; }
     public ApplicationUser Author { get; set; }
     
 }

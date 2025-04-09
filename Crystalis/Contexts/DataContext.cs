@@ -29,10 +29,10 @@ public class DataContext : IdentityDbContext<ApplicationUser>
             .HasMany(c => c.Campaigns)
             .WithOne(l => l.World)
             .HasForeignKey(l => l.WorldId);
-        modelBuilder.Entity<Campaign>()
+        modelBuilder.Entity<World>()
             .HasMany(c => c.Locations)
-            .WithOne(l => l.Campaign)
-            .HasForeignKey(l => l.CampaignID);
+            .WithOne(l => l.World)
+            .HasForeignKey(l => l.WorldId);
         modelBuilder.Entity<Campaign>()
             .HasOne(c => c.Author)
             .WithMany(l => l.Campaigns)

@@ -10,7 +10,7 @@ public class Location
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
-    public int CampaignID { get; set; }
+    public int WorldId { get; set; }
     
-    public Campaign.Campaign Campaign { get; set; }
+    public World.World World { get; set; }
 }
