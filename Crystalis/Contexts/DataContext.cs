@@ -1,5 +1,6 @@
 using Crystalis.Models;
 using Crystalis.Models.Campaign;
+using Crystalis.Models.World;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public class DataContext : IdentityDbContext<ApplicationUser>
     public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Character> Characters { get; set; }
+    public DbSet<World> Worlds { get; set; }
     public DbSet<CampaignUser> CampaignUsers { get; set; }
     public DbSet<CampaignQueue> CampaignQueues { get; set; }
 
@@ -23,6 +25,10 @@ public class DataContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<CampaignQueue>().HasKey(cu => new { cu.UserId, cu.CampaignId });
         
         // Configure relationships
+        modelBuilder.Entity<World>()
+            .HasMany(c => c.Campaigns)
+            .WithOne(l => l.World)
+            .HasForeignKey(l => l.WorldId);
         modelBuilder.Entity<Campaign>()
             .HasMany(c => c.Locations)
             .WithOne(l => l.Campaign)

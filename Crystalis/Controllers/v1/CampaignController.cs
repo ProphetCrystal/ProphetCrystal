@@ -38,21 +38,24 @@ public class CampaignController : ControllerBase
     // [Authorize(Policy = "PlayerAccess")]
 
 
-    [HttpPost("update")]
+    [AutoValidation]
+    [HttpPatch("update")]
     public  IActionResult Update([FromBody] UpdateCampaignDto campaignDto)
     {
         var campaign = _campaignService.Update(campaignDto);
         return Ok(campaign);
     }
-    [HttpPatch("create")]
+    [AutoValidation]
+    [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
     {
         var campaign = await _campaignService.Create(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 
+    [AutoValidation]
     [HttpDelete]
-    public IActionResult Delete([FromQuery] GetCampaignDto getCampaignDto)
+    public IActionResult Delete([FromBody] GetCampaignDto getCampaignDto)
     {
         _campaignService.Delete(getCampaignDto.Uuid);
         return Ok();
@@ -61,6 +64,7 @@ public class CampaignController : ControllerBase
     // [Authorize(Policy = "PlayerAccess")]
 
 
+    [AutoValidation]
     [HttpPost("join")]
     public async Task<IActionResult> Join([FromBody] GetCampaignDto campaignDto)
     {
@@ -68,6 +72,7 @@ public class CampaignController : ControllerBase
         return Ok(campaign);
     }
 
+    [AutoValidation]
     [HttpPost("leave")]
     public async Task<IActionResult> Leave([FromBody] GetCampaignDto campaignDto)
     {

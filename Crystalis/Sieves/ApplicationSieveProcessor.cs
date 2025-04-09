@@ -15,6 +15,7 @@ public class ApplicationSieveProcessor : SieveProcessor
     protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
     {
         return mapper
-            .ApplyConfiguration<CampaignSieve>();       
+            .ApplyConfiguration<CampaignSieve>()       
+            .ApplyConfiguration<WorldSieve>();       
     }
 }
