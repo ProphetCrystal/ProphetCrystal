@@ -1,4 +1,5 @@
 using Crystalis.Models;
+using Crystalis.Models.Campaign;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

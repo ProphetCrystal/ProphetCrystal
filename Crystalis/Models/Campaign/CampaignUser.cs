@@ -1,6 +1,6 @@
 using Crystalis.Enums;
 
-namespace Crystalis.Models;
+namespace Crystalis.Models.Campaign;
 
 public class CampaignUser
 {
@@ -9,5 +9,5 @@ public class CampaignUser
     public CampaignUserRole Role { get; set; } // Enum for GM/Player
     
     public ApplicationUser User { get; set; }
-    public Campaign Campaign { get; set; }
+    public Models.Campaign.Campaign Campaign { get; set; }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Crystalis.Models;
+namespace Crystalis.Models.Campaign;
 
 public class Campaign
 {

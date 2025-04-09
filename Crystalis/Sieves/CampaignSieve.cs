@@ -1,4 +1,5 @@
 using Crystalis.Models;
+using Crystalis.Models.Campaign;
 using Sieve.Services;
 
 namespace Crystalis.Sieves;

@@ -15,6 +15,6 @@ public class Character
     public int CampaignId { get; set; }
     
     public ApplicationUser User { get; set; }
-    public Campaign Campaign { get; set; }
+    public Campaign.Campaign Campaign { get; set; }
     
 }

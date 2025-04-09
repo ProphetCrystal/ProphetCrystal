@@ -1,5 +1,6 @@
 using Crystalis.Contexts;
 using Crystalis.Models;
+using Crystalis.Models.Campaign;
 using Crystalis.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

@@ -12,5 +12,5 @@ public class Location
     public DateTime? UpdatedAt { get; set; }
     public int CampaignID { get; set; }
     
-    public Campaign Campaign { get; set; }
+    public Campaign.Campaign Campaign { get; set; }
 }

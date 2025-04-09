@@ -1,3 +1,4 @@
+using Crystalis.Models.Campaign;
 using Microsoft.AspNetCore.Identity;
 
 namespace Crystalis.Models;
@@ -13,5 +14,5 @@ public class ApplicationUser : IdentityUser
     public ICollection<CampaignUser> CampaignUsers { get; set; }
     public ICollection<CampaignQueue> CampaignQueues { get; set; }
     public ICollection<Character> Characters { get; set; }
-    public ICollection<Campaign> Campaigns { get; set; }
+    public ICollection<Campaign.Campaign> Campaigns { get; set; }
 }

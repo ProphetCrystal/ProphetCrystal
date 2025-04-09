@@ -3,6 +3,7 @@ using AutoMapper;
 using Crystalis.DTO.Campaign;
 using Crystalis.Enums;
 using Crystalis.Models;
+using Crystalis.Models.Campaign;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
