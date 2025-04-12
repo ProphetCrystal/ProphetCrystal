@@ -1,6 +1,4 @@
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
-using Crystalis.Models.World;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,8 +6,10 @@ namespace Crystalis.Contexts;
 
 public class DataContext : IdentityDbContext<ApplicationUser>
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-    
+    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    {
+    }
+
     public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Character> Characters { get; set; }
@@ -17,52 +17,58 @@ public class DataContext : IdentityDbContext<ApplicationUser>
     public DbSet<CampaignUser> CampaignUsers { get; set; }
     public DbSet<CampaignQueue> CampaignQueues { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
+
         #region Relations
-        modelBuilder.Entity<CampaignUser>().HasKey(cu => new { cu.UserId, cu.CampaignId });
-        modelBuilder.Entity<CampaignQueue>().HasKey(cu => new { cu.UserId, cu.CampaignId });
-        
-        // Configure relationships
-        modelBuilder.Entity<World>()
+
+        builder.Entity<Note>()
+            .HasDiscriminator<string>("OwnerType")
+            .HasValue<WorldNote>("World")
+            .HasValue<LocationNote>("Location");
+
+        builder.Entity<CampaignUser>().HasKey(cu => new { cu.UserId, cu.CampaignId });
+        builder.Entity<CampaignQueue>().HasKey(cu => new { cu.UserId, cu.CampaignId });
+
+        builder.Entity<World>()
             .HasMany(c => c.Campaigns)
             .WithOne(l => l.World)
             .HasForeignKey(l => l.WorldId);
-        modelBuilder.Entity<World>()
+        builder.Entity<World>()
             .HasMany(c => c.Locations)
             .WithOne(l => l.World)
             .HasForeignKey(l => l.WorldId);
-        modelBuilder.Entity<Campaign>()
+        builder.Entity<Campaign>()
             .HasOne(c => c.Author)
             .WithMany(l => l.Campaigns)
             .HasForeignKey(l => l.AuthorId);
-            
-        modelBuilder.Entity<ApplicationUser>()
+
+        builder.Entity<ApplicationUser>()
             .HasMany(u => u.Characters)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId);
-            
-        modelBuilder.Entity<CampaignUser>()
+
+        builder.Entity<CampaignUser>()
             .HasOne(cu => cu.User)
             .WithMany(u => u.CampaignUsers)
             .HasForeignKey(cu => cu.UserId);
-            
-        modelBuilder.Entity<CampaignUser>()
+
+        builder.Entity<CampaignUser>()
             .HasOne(cu => cu.Campaign)
             .WithMany(c => c.CampaignUsers)
             .HasForeignKey(cu => cu.CampaignId);
-        
-        modelBuilder.Entity<CampaignQueue>()
+
+        builder.Entity<CampaignQueue>()
             .HasOne(cu => cu.User)
             .WithMany(u => u.CampaignQueues)
             .HasForeignKey(cu => cu.UserId);
-        
-        modelBuilder.Entity<CampaignQueue>()
+
+        builder.Entity<CampaignQueue>()
             .HasOne(cu => cu.Campaign)
             .WithMany(u => u.CampaignQueues)
             .HasForeignKey(cu => cu.CampaignId);
+
         #endregion
-        
     }
 }

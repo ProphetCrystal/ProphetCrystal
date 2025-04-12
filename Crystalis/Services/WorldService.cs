@@ -1,11 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
-using Crystalis.DTO.Campaign;
 using Crystalis.DTO.World;
-using Crystalis.Enums;
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
-using Crystalis.Models.World;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -15,9 +11,9 @@ namespace Crystalis.Services;
 
 public class WorldService : IWorldService
 {
-    private readonly IWorldRepository _worldRepository;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IWorldRepository _worldRepository;
 
     public WorldService(IWorldRepository worldRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
@@ -28,7 +24,7 @@ public class WorldService : IWorldService
 
     public async Task<List<WorldDto>> Get(SieveModel sieveModel, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
         return _mapper.Map<List<WorldDto>>(_worldRepository.Get(sieveModel, user.IsInRole("Admin"), currentUser.Id));
     }
 
@@ -44,17 +40,17 @@ public class WorldService : IWorldService
 
     public async Task<WorldDto> Create(CreateWorldDto world, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
-        var mappedCampaign = _mapper.Map<World>(world);
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
+        World? mappedCampaign = _mapper.Map<World>(world);
         mappedCampaign.Author = currentUser;
-        var createdCampaign = _worldRepository.Create(mappedCampaign);
-        
+        World createdCampaign = _worldRepository.Create(mappedCampaign);
+
         return _mapper.Map<WorldDto>(createdCampaign);
     }
 
     public WorldDto Update(UpdateWorldDto world)
     {
-        var mappedCampaign = _mapper.Map<World>(world);
+        World? mappedCampaign = _mapper.Map<World>(world);
         mappedCampaign.UpdatedAt = DateTime.Now;
         return _mapper.Map<WorldDto>(_worldRepository.Update(mappedCampaign));
     }

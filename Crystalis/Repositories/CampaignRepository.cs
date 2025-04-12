@@ -1,6 +1,5 @@
 using Crystalis.Contexts;
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
 using Crystalis.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -13,18 +12,17 @@ public class CampaignRepository : ICampaignRepository
 {
     private readonly DataContext _dataContext;
     private readonly ISieveProcessor _sieveProcessor;
-    public CampaignRepository (DataContext dataContext, ISieveProcessor sieveProcessor)
+
+    public CampaignRepository(DataContext dataContext, ISieveProcessor sieveProcessor)
     {
         _dataContext = dataContext;
         _sieveProcessor = sieveProcessor;
     }
+
     public List<Campaign> Get(SieveModel sieveModel, bool isAdmin, string userId)
     {
-        var result = _dataContext.Campaigns.AsNoTracking();
-        if (!isAdmin)
-        {
-            result = result.Where(x => x.AuthorId == userId);
-        }
+        IQueryable<Campaign>? result = _dataContext.Campaigns.AsNoTracking();
+        if (!isAdmin) result = result.Where(x => x.AuthorId == userId);
         result = _sieveProcessor.Apply(sieveModel, result);
         return result.ToList();
     }
@@ -50,7 +48,7 @@ public class CampaignRepository : ICampaignRepository
 
     public Campaign Update(Campaign campaign)
     {
-        var campaignToUpdate = _dataContext.Campaigns.First(x => x.Uuid == campaign.Uuid);
+        Campaign campaignToUpdate = _dataContext.Campaigns.First(x => x.Uuid == campaign.Uuid);
         _dataContext.Campaigns.Entry(campaignToUpdate).CurrentValues.SetValues(campaign);
         _dataContext.SaveChanges();
         return campaignToUpdate;
@@ -67,10 +65,12 @@ public class CampaignRepository : ICampaignRepository
         _dataContext.Remove(_dataContext.Campaigns.First(x => x.Uuid == Guid.Parse(id)));
         _dataContext.SaveChanges();
     }
+
     public bool Leave(string campaignId, string userId)
     {
-        var campaign = this.Get(campaignId);
-        CampaignQueue? campaignQueue = _dataContext.CampaignQueues.FirstOrDefault((x) => x.CampaignId == campaign.Id && x.UserId == userId);
+        Campaign campaign = Get(campaignId);
+        CampaignQueue? campaignQueue =
+            _dataContext.CampaignQueues.FirstOrDefault(x => x.CampaignId == campaign.Id && x.UserId == userId);
         if (campaignQueue != null)
         {
             _dataContext.CampaignQueues.Remove(campaignQueue);
@@ -78,19 +78,22 @@ public class CampaignRepository : ICampaignRepository
             return true;
         }
 
-        CampaignUser? campaignUser = _dataContext.CampaignUsers.FirstOrDefault((x) => x.CampaignId == campaign.Id && x.UserId == userId);
+        CampaignUser? campaignUser =
+            _dataContext.CampaignUsers.FirstOrDefault(x => x.CampaignId == campaign.Id && x.UserId == userId);
         if (campaignUser != null)
         {
             _dataContext.CampaignUsers.Remove(campaignUser);
             _dataContext.SaveChanges();
             return true;
         }
+
         return false;
     }
+
     public Campaign Join(string campaignId, string userId)
     {
-        var campaign = this.Get(campaignId);
-        CampaignQueue campaignQueue = new CampaignQueue();
+        Campaign campaign = Get(campaignId);
+        CampaignQueue campaignQueue = new();
         campaignQueue.CampaignId = campaign.Id;
         campaignQueue.UserId = userId;
         _dataContext.Add(campaignQueue);

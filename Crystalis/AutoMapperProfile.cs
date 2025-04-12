@@ -1,7 +1,6 @@
 using AutoMapper;
 using Crystalis.DTO.Campaign;
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
 
 namespace Crystalis;
 

@@ -1,7 +1,5 @@
 using Crystalis.DTO.Campaign;
-using Crystalis.Models;
 using Crystalis.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 using Sieve.Models;
@@ -12,8 +10,8 @@ namespace Crystalis.Controllers.v1;
 [Route("api/campaign")]
 public class CampaignController : ControllerBase
 {
-    private readonly ILogger<CampaignController> _logger;
     private readonly ICampaignService _campaignService;
+    private readonly ILogger<CampaignController> _logger;
 
     public CampaignController(ILogger<CampaignController> logger, ICampaignService campaignService)
     {
@@ -24,14 +22,15 @@ public class CampaignController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index([FromQuery] SieveModel sieveModel)
     {
-        var campaigns = await _campaignService.Get(sieveModel, HttpContext.User);
+        List<CampaignDto> campaigns = await _campaignService.Get(sieveModel, HttpContext.User);
         return Ok(campaigns);
     }
+
     [AutoValidation]
     [HttpGet]
     public IActionResult Get([FromQuery] GetCampaignDto getCampaignDto)
     {
-        var campaigns = _campaignService.Get(getCampaignDto.Uuid);
+        CampaignDto campaigns = _campaignService.Get(getCampaignDto.Uuid);
         return Ok(campaigns);
     }
 
@@ -40,16 +39,18 @@ public class CampaignController : ControllerBase
 
     [AutoValidation]
     [HttpPatch("update")]
-    public  IActionResult Update([FromBody] UpdateCampaignDto campaignDto)
+    [ProducesResponseType<CampaignDto>(StatusCodes.Status200OK)]
+    public IActionResult Update([FromBody] UpdateCampaignDto campaignDto)
     {
-        var campaign = _campaignService.Update(campaignDto);
+        CampaignDto campaign = _campaignService.Update(campaignDto);
         return Ok(campaign);
     }
+
     [AutoValidation]
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
     {
-        var campaign = await _campaignService.Create(campaignDto, HttpContext.User);
+        CampaignDto campaign = await _campaignService.Create(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 
@@ -68,7 +69,7 @@ public class CampaignController : ControllerBase
     [HttpPost("join")]
     public async Task<IActionResult> Join([FromBody] GetCampaignDto campaignDto)
     {
-        var campaign = await _campaignService.Join(campaignDto, HttpContext.User);
+        CampaignDto campaign = await _campaignService.Join(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 
@@ -76,7 +77,7 @@ public class CampaignController : ControllerBase
     [HttpPost("leave")]
     public async Task<IActionResult> Leave([FromBody] GetCampaignDto campaignDto)
     {
-        var campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
+        bool campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
         return Ok(campaign);
     }
 }

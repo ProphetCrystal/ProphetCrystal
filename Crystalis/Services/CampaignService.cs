@@ -3,7 +3,6 @@ using AutoMapper;
 using Crystalis.DTO.Campaign;
 using Crystalis.Enums;
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
 using Crystalis.Repositories.Interfaces;
 using Crystalis.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +16,8 @@ public class CampaignService : ICampaignService
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public CampaignService(ICampaignRepository campaignRepository, IMapper mapper,
+        UserManager<ApplicationUser> userManager)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -26,8 +26,9 @@ public class CampaignService : ICampaignService
 
     public async Task<List<CampaignDto>> Get(SieveModel sieveModel, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
-        return _mapper.Map<List<CampaignDto>>(_campaignRepository.Get(sieveModel, user.IsInRole("Admin"), currentUser.Id));
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
+        return _mapper.Map<List<CampaignDto>>(_campaignRepository.Get(sieveModel, user.IsInRole("Admin"),
+            currentUser.Id));
     }
 
     public CampaignDto Get(int id)
@@ -42,22 +43,22 @@ public class CampaignService : ICampaignService
 
     public async Task<CampaignDto> Create(CreateCampaignDto campaign, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
-        var mappedCampaign = _mapper.Map<Campaign>(campaign);
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
+        Campaign? mappedCampaign = _mapper.Map<Campaign>(campaign);
         mappedCampaign.Author = currentUser;
-        mappedCampaign.CampaignUsers.Add( new()
+        mappedCampaign.CampaignUsers.Add(new CampaignUser
         {
             UserId = currentUser.Id,
             Role = CampaignUserRole.GameMaster
         });
-        var createdCampaign = _campaignRepository.Create(mappedCampaign);
-        
+        Campaign createdCampaign = _campaignRepository.Create(mappedCampaign);
+
         return _mapper.Map<CampaignDto>(createdCampaign);
     }
 
     public CampaignDto Update(UpdateCampaignDto campaign)
     {
-        var mappedCampaign = _mapper.Map<Campaign>(campaign);
+        Campaign? mappedCampaign = _mapper.Map<Campaign>(campaign);
         mappedCampaign.UpdatedAt = DateTime.Now;
         return _mapper.Map<CampaignDto>(_campaignRepository.Update(mappedCampaign));
     }
@@ -74,13 +75,13 @@ public class CampaignService : ICampaignService
 
     public async Task<CampaignDto> Join(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
         return _mapper.Map<CampaignDto>(_campaignRepository.Join(joinCampaignDto.Uuid, currentUser.Id));
     }
 
     public async Task<bool> Leave(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
     {
-        var currentUser = await _userManager.GetUserAsync(user);
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
         return _campaignRepository.Leave(joinCampaignDto.Uuid, currentUser.Id);
     }
 }

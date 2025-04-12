@@ -8,48 +8,48 @@ using Sieve.Services;
 
 namespace Crystalis.Repositories;
 
-public class WorldRepository : IWorldRepository
+public class LocationRepository : ILocationRepository
 {
     private readonly DataContext _dataContext;
     private readonly ISieveProcessor _sieveProcessor;
 
-    public WorldRepository(DataContext dataContext, ISieveProcessor sieveProcessor)
+    public LocationRepository(DataContext dataContext, ISieveProcessor sieveProcessor)
     {
         _dataContext = dataContext;
         _sieveProcessor = sieveProcessor;
     }
 
-    public List<World> Get(SieveModel sieveModel, bool isAdmin, string userId)
+    public List<Location> Get(SieveModel sieveModel, int worldId)
     {
-        IQueryable<World>? result = _dataContext.Worlds.AsNoTracking();
-        if (!isAdmin) result = result.Where(x => x.AuthorId == userId);
+        IQueryable<Location>? result = _dataContext.Locations.AsNoTracking();
+        result = result.Where(x => x.WorldId == worldId);
         result = _sieveProcessor.Apply(sieveModel, result);
         return result.ToList();
     }
 
-    public World Get(int id)
+    public Location Get(int id)
     {
-        return _dataContext.Worlds.AsNoTracking().First(x => x.Id == id);
+        return _dataContext.Locations.AsNoTracking().First(x => x.Id == id);
     }
 
-    public World Get(string id)
+    public Location Get(string id)
     {
-        return _dataContext.Worlds.AsNoTracking().First(x => x.Uuid == Guid.Parse(id));
+        return _dataContext.Locations.AsNoTracking().First(x => x.Uuid == Guid.Parse(id));
     }
 
-    public World Create(World world)
+    public Location Create(Location location)
     {
-        world.UpdatedAt = DateTime.UtcNow;
-        world.Uuid = Guid.NewGuid();
-        EntityEntry<World> entry = _dataContext.Add(world);
+        location.UpdatedAt = DateTime.UtcNow;
+        location.Uuid = Guid.NewGuid();
+        EntityEntry<Location> entry = _dataContext.Add(location);
         _dataContext.SaveChanges();
         return entry.Entity;
     }
 
-    public World Update(World world)
+    public Location Update(Location location)
     {
-        World worldToUpdate = _dataContext.Worlds.First(x => x.Uuid == world.Uuid);
-        _dataContext.Worlds.Entry(worldToUpdate).CurrentValues.SetValues(world);
+        Location worldToUpdate = _dataContext.Locations.First(x => x.Uuid == location.Uuid);
+        _dataContext.Locations.Entry(worldToUpdate).CurrentValues.SetValues(location);
         _dataContext.SaveChanges();
         return worldToUpdate;
     }

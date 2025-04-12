@@ -1,6 +1,4 @@
-using Crystalis.Enums;
 using Crystalis.Models;
-using Crystalis.Models.Campaign;
 using Sieve.Models;
 
 namespace Crystalis.Repositories.Interfaces;
