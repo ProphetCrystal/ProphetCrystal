@@ -34,7 +34,7 @@ public class WorldRepository : IWorldRepository
 
     public World Get(string id)
     {
-        return _dataContext.Worlds.AsNoTracking().First(x => x.Uuid == Guid.Parse(id));
+        return _dataContext.Worlds.Include(x => x.Notes).AsNoTracking().First(x => x.Uuid == Guid.Parse(id));
     }
 
     public World Create(World world)

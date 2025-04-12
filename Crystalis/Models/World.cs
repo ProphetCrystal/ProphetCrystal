@@ -16,5 +16,6 @@ public class World
 
     public ICollection<Campaign> Campaigns { get; set; }
     public ICollection<Location> Locations { get; set; }
+    public ICollection<Note> Notes { get; set; }
     public ApplicationUser Author { get; set; }
 }

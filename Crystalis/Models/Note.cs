@@ -1,3 +1,5 @@
+using Crystalis.Enums;
+
 namespace Crystalis.Models;
 
 public abstract class Note
@@ -5,10 +7,7 @@ public abstract class Note
     public int Id { get; set; }
     public string Text { get; set; }
     public DateTime Created { get; set; }
-
-    // Navigation property to owner (can be World, Location, or Person)
-    public int OwnerId { get; set; }
-    public string OwnerType { get; set; } // Discriminator
+    public NoteType OwnerType { get; set; }
 }
 
 public class WorldNote : Note

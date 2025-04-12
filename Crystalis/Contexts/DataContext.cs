@@ -1,3 +1,4 @@
+using Crystalis.Enums;
 using Crystalis.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ public class DataContext : IdentityDbContext<ApplicationUser>
     public DbSet<World> Worlds { get; set; }
     public DbSet<CampaignUser> CampaignUsers { get; set; }
     public DbSet<CampaignQueue> CampaignQueues { get; set; }
+    public DbSet<Note> Notes { get; set; }
+    public DbSet<WorldNote> WorldNotes { get; set; }
+    public DbSet<LocationNote> LocationNotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -24,9 +28,9 @@ public class DataContext : IdentityDbContext<ApplicationUser>
         #region Relations
 
         builder.Entity<Note>()
-            .HasDiscriminator<string>("OwnerType")
-            .HasValue<WorldNote>("World")
-            .HasValue<LocationNote>("Location");
+            .HasDiscriminator<NoteType>("OwnerType")
+            .HasValue<WorldNote>(NoteType.WorldNote)
+            .HasValue<LocationNote>(NoteType.LocationNote);
 
         builder.Entity<CampaignUser>().HasKey(cu => new { cu.UserId, cu.CampaignId });
         builder.Entity<CampaignQueue>().HasKey(cu => new { cu.UserId, cu.CampaignId });

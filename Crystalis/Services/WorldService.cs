@@ -12,13 +12,16 @@ namespace Crystalis.Services;
 public class WorldService : IWorldService
 {
     private readonly IMapper _mapper;
+    private readonly INoteRepository _noteRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IWorldRepository _worldRepository;
 
-    public WorldService(IWorldRepository worldRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public WorldService(IWorldRepository worldRepository, IMapper mapper, UserManager<ApplicationUser> userManager,
+        INoteRepository noteRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
+        _noteRepository = noteRepository;
         _worldRepository = worldRepository;
     }
 
@@ -35,7 +38,9 @@ public class WorldService : IWorldService
 
     public WorldDto Get(string id)
     {
-        return _mapper.Map<WorldDto>(_worldRepository.Get(id));
+        // List<WorldNote> worldNotes = _noteRepository.Get<WorldNote>(id);
+        WorldDto worldDto = _mapper.Map<WorldDto>(_worldRepository.Get(id));
+        return worldDto;
     }
 
     public async Task<WorldDto> Create(CreateWorldDto world, ClaimsPrincipal user)
