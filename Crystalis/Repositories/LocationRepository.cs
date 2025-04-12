@@ -19,10 +19,10 @@ public class LocationRepository : ILocationRepository
         _sieveProcessor = sieveProcessor;
     }
 
-    public List<Location> Get(SieveModel sieveModel, int worldId)
+    public List<Location> Get(SieveModel sieveModel, int locationId)
     {
         IQueryable<Location>? result = _dataContext.Locations.AsNoTracking();
-        result = result.Where(x => x.WorldId == worldId);
+        result = result.Where(x => x.WorldId == locationId);
         result = _sieveProcessor.Apply(sieveModel, result);
         return result.ToList();
     }

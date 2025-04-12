@@ -2,5 +2,5 @@ namespace Crystalis.DTO.Campaign;
 
 public class JoinCampaignDto
 {
-    public string CampaignUuid { get; set; }
+    public required string CampaignUuid { get; set; }
 }

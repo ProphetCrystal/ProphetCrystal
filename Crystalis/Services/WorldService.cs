@@ -12,16 +12,13 @@ namespace Crystalis.Services;
 public class WorldService : IWorldService
 {
     private readonly IMapper _mapper;
-    private readonly INoteRepository _noteRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IWorldRepository _worldRepository;
 
-    public WorldService(IWorldRepository worldRepository, IMapper mapper, UserManager<ApplicationUser> userManager,
-        INoteRepository noteRepository)
+    public WorldService(IWorldRepository worldRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _mapper = mapper;
         _userManager = userManager;
-        _noteRepository = noteRepository;
         _worldRepository = worldRepository;
     }
 
@@ -38,7 +35,6 @@ public class WorldService : IWorldService
 
     public WorldDto Get(string id)
     {
-        // List<WorldNote> worldNotes = _noteRepository.Get<WorldNote>(id);
         WorldDto worldDto = _mapper.Map<WorldDto>(_worldRepository.Get(id));
         return worldDto;
     }

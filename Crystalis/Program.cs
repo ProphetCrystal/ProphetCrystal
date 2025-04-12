@@ -67,26 +67,27 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 JwtSection? jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSection>();
-if (jwtSettings == null) throw new NullReferenceException("JWT settings not found");
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
+if (jwtSettings != null)
+    builder.Services.AddAuthentication(options =>
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings.ValidIssuer,
-            ValidAudience = jwtSettings.ValidAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-        };
-    });
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.ValidIssuer,
+                ValidAudience = jwtSettings.ValidAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+            };
+        });
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminAccess", policy =>
@@ -108,14 +109,14 @@ if (app.Environment.IsDevelopment())
     using (IServiceScope scope = app.Services.CreateScope())
     using (DataContext? context = scope.ServiceProvider.GetService<DataContext>())
     {
-        context?.Database.EnsureDeleted();
-        context?.Database.EnsureCreated();
+        context?.Database.EnsureDeletedAsync();
+        context?.Database.EnsureCreatedAsync();
 
-        context.Roles.Add(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
-        context.Roles.Add(new IdentityRole { Name = "GameMaster", NormalizedName = "GAMEMASTER" });
-        context.Roles.Add(new IdentityRole { Name = "Player", NormalizedName = "PLAYER" });
+        context?.Roles.Add(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
+        context?.Roles.Add(new IdentityRole { Name = "GameMaster", NormalizedName = "GAMEMASTER" });
+        context?.Roles.Add(new IdentityRole { Name = "Player", NormalizedName = "PLAYER" });
 
-        context.SaveChanges();
+        await context?.SaveChangesAsync();
     }
 
     app.UseSwagger();
@@ -128,4 +129,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

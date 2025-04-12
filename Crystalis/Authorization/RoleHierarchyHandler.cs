@@ -8,13 +8,10 @@ public class RoleHierarchyHandler : AuthorizationHandler<RoleHierarchyRequiremen
         AuthorizationHandlerContext context,
         RoleHierarchyRequirement requirement)
     {
-        if (context.User == null)
-        {
-            return Task.CompletedTask;
-        }
+        if (context.User == null) return Task.CompletedTask;
 
         // Define role hierarchy
-        var roleHierarchy = new Dictionary<string, List<string>>
+        Dictionary<string, List<string>> roleHierarchy = new()
         {
             { "Admin", new List<string> { "Admin", "GameMaster", "Player" } },
             { "GameMaster", new List<string> { "GameMaster", "Player" } },
@@ -22,17 +19,12 @@ public class RoleHierarchyHandler : AuthorizationHandler<RoleHierarchyRequiremen
         };
 
         // Check if user has any of the required roles
-        foreach (var role in roleHierarchy.Keys)
-        {
-            if (context.User.IsInRole(role))
+        foreach (string role in roleHierarchy.Keys)
+            if (context.User.IsInRole(role) && roleHierarchy[role].Contains(requirement.RequiredRole))
             {
-                if (roleHierarchy[role].Contains(requirement.RequiredRole))
-                {
-                    context.Succeed(requirement);
-                    break;
-                }
+                context.Succeed(requirement);
+                break;
             }
-        }
 
         return Task.CompletedTask;
     }

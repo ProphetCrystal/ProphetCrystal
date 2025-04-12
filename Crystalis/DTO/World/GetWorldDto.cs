@@ -2,5 +2,5 @@ namespace Crystalis.DTO.World;
 
 public class GetWorldDto
 {
-    public string Uuid { get; set; }
+    public required string Uuid { get; set; }
 }

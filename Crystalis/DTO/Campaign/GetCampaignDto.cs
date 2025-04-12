@@ -2,5 +2,5 @@ namespace Crystalis.DTO.Campaign;
 
 public class GetCampaignDto
 {
-    public string Uuid { get; set; }
+    public required  string Uuid { get; set; }
 }

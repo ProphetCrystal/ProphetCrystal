@@ -73,15 +73,15 @@ public class CampaignService : ICampaignService
         _campaignRepository.Delete(id);
     }
 
-    public async Task<CampaignDto> Join(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    public async Task<CampaignDto> Join(GetCampaignDto getCampaignDto, ClaimsPrincipal user)
     {
         ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
-        return _mapper.Map<CampaignDto>(_campaignRepository.Join(joinCampaignDto.Uuid, currentUser.Id));
+        return _mapper.Map<CampaignDto>(_campaignRepository.Join(getCampaignDto.Uuid, currentUser.Id));
     }
 
-    public async Task<bool> Leave(GetCampaignDto joinCampaignDto, ClaimsPrincipal user)
+    public async Task<bool> Leave(GetCampaignDto getCampaignDto, ClaimsPrincipal user)
     {
         ApplicationUser? currentUser = await _userManager.GetUserAsync(user);
-        return _campaignRepository.Leave(joinCampaignDto.Uuid, currentUser.Id);
+        return _campaignRepository.Leave(getCampaignDto.Uuid, currentUser.Id);
     }
 }

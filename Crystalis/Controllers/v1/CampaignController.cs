@@ -11,15 +11,14 @@ namespace Crystalis.Controllers.v1;
 public class CampaignController : ControllerBase
 {
     private readonly ICampaignService _campaignService;
-    private readonly ILogger<CampaignController> _logger;
 
-    public CampaignController(ILogger<CampaignController> logger, ICampaignService campaignService)
+    public CampaignController(ICampaignService campaignService)
     {
-        _logger = logger;
         _campaignService = campaignService;
     }
 
     [HttpGet("index")]
+    [ProducesResponseType<List<CampaignDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Index([FromQuery] SieveModel sieveModel)
     {
         List<CampaignDto> campaigns = await _campaignService.Get(sieveModel, HttpContext.User);
@@ -28,6 +27,7 @@ public class CampaignController : ControllerBase
 
     [AutoValidation]
     [HttpGet]
+    [ProducesResponseType<CampaignDto>(StatusCodes.Status200OK)]
     public IActionResult Get([FromQuery] GetCampaignDto getCampaignDto)
     {
         CampaignDto campaigns = _campaignService.Get(getCampaignDto.Uuid);
@@ -48,6 +48,7 @@ public class CampaignController : ControllerBase
 
     [AutoValidation]
     [HttpPost("create")]
+    [ProducesResponseType<CampaignDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Create([FromBody] CreateCampaignDto campaignDto)
     {
         CampaignDto campaign = await _campaignService.Create(campaignDto, HttpContext.User);
@@ -67,6 +68,7 @@ public class CampaignController : ControllerBase
 
     [AutoValidation]
     [HttpPost("join")]
+    [ProducesResponseType<CampaignDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Join([FromBody] GetCampaignDto campaignDto)
     {
         CampaignDto campaign = await _campaignService.Join(campaignDto, HttpContext.User);
@@ -75,6 +77,7 @@ public class CampaignController : ControllerBase
 
     [AutoValidation]
     [HttpPost("leave")]
+    [ProducesResponseType<CampaignDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Leave([FromBody] GetCampaignDto campaignDto)
     {
         bool campaign = await _campaignService.Leave(campaignDto, HttpContext.User);
