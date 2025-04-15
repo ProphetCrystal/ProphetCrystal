@@ -21,7 +21,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-              prophetcrystal/backend
+              ghcr.io/prophetcrystal/backend
           tags: |
               type=ref,event=branch
               type=ref,event=pr
