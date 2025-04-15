@@ -1,4 +1,4 @@
-name: Docker Image CI - Stage
+name: Docker Image CI - Release
 
 on:
   workflow_dispatch: 
@@ -35,7 +35,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          tags: |
-            ghcr.io/prophet-crystal/prophet_crystal:stage
-            ghcr.io/prophet-crystal/prophet_crystal:${{ github.event.release.tag_name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           push: true
