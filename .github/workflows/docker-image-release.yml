@@ -1,9 +1,14 @@
 name: Docker Image CI - Release
 
 on:
-  workflow_dispatch: 
-  release:
-    types: [ published ]
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
   build:
