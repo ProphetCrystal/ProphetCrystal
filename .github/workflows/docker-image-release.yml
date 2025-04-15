@@ -1,6 +1,7 @@
 name: Docker Image CI - Stage
 
 on:
+  workflow_dispatch: 
   release:
     types: [ published ]
 

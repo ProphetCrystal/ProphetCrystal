@@ -1,5 +1,4 @@
 
-LABEL org.opencontainers.image.source=https://github.com/ProphetCrystal/ProphetCrystal
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
@@ -8,6 +7,7 @@ RUN dotnet restore
 RUN dotnet publish -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+LABEL org.opencontainers.image.source=https://github.com/ProphetCrystal/ProphetCrystal
 RUN apt-get update && \
     apt-get install -yq --no-install-recommends \
     libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
