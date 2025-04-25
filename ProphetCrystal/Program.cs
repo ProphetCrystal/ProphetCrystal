@@ -1,5 +1,11 @@
 using System.Reflection;
 using System.Text;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ProphetCrystal.Authorization;
 using ProphetCrystal.Configuration;
 using ProphetCrystal.Contexts;
@@ -9,12 +15,6 @@ using ProphetCrystal.Repositories.Interfaces;
 using ProphetCrystal.Services;
 using ProphetCrystal.Services.Interfaces;
 using ProphetCrystal.Sieves;
-using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Sieve.Services;
@@ -109,14 +109,14 @@ if (app.Environment.IsDevelopment())
     using (IServiceScope scope = app.Services.CreateScope())
     using (DataContext? context = scope.ServiceProvider.GetService<DataContext>())
     {
-        context?.Database.EnsureDeletedAsync();
-        context?.Database.EnsureCreatedAsync();
+        context?.Database.EnsureDeleted();
+        context?.Database.EnsureCreated();
 
         context?.Roles.Add(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
         context?.Roles.Add(new IdentityRole { Name = "GameMaster", NormalizedName = "GAMEMASTER" });
         context?.Roles.Add(new IdentityRole { Name = "Player", NormalizedName = "PLAYER" });
 
-        await context?.SaveChangesAsync();
+        context?.SaveChanges();
     }
 
     app.UseSwagger();
